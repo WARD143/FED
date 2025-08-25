@@ -1,0 +1,86 @@
+/* Base body styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f4f8;
+}
+
+/* Header styling */
+header {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+/* About section layout */
+.about {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+/* Responsive image styling */
+.responsive-img {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Registration form section */
+.registration {
+  padding: 20px;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  max-width: 400px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  color: #fff;
+}
+
+/* Title */
+.registration h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Form layout */
+.registration form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels and Inputs */
+.registration label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.registration input {
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+}
+
+/* Submit Button */
+.registration button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #0044cc;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.registration button:hover {
