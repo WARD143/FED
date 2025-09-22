@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📚 Online Bookstore</title>
+  <style>
+    /* Reset and fonts */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(120deg, #f0f8ff, #e6f7ff);
+      color: #333;
+      padding: 20px;
+    }
+
+    /* Header */
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    /* Layout for book list and cart */
+    #book-list, #cart {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    /* Book Card */
+    .book {
+      background: linear-gradient(145deg, #ffffff, #fefefe);
+      border-radius: 15px;
+      padding: 20px;
+      width: 250px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .book:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+    }
+    .book h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: #ff416c;
+    }
+    .book p { margin: 5px 0; }
+
+    /* Buttons */
+    button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .add-btn { background: #28a745; color: white; }
+    .remove-btn { background: #dc3545; color: white; }
+
+    /* Cart styling */
+    #cart {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+    .cart-item {
+      background: linear-gradient(145deg, #fff7e6, #fff0cc);
+      width: 400px;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+    #cart h2 {
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-size: 2rem;
+    }
+    #cart h3 { margin-top: 15px; color: #007bff; }
+
+    /* Checkout button */
+    #checkout {
+      background: linear-gradient(to right, #f7971e, #ffd200);
+      color: #222;
+      width: 220px;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 10px;
+    }
+    #checkout:hover { background: linear-gradient(to right, #ffd200, #f7971e); }
+
+    /* Responsive */
+    @media (max-width: 650px) {
+      .book, .cart-item { width: 90%; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 Online Bookstore</h1>
+  <div id="book-list"></div>
+  <hr>
+  <div id="cart"></div>
+
+  <script type="module">
+    const conversionRate = 83; // USD → INR
+
+    // data.js
+    const booksData = [
+      { title: "Eloquent JavaScript", author: "Marijn Haverbeke", price: 25.99, availability: "in stock" },
+      { title: "You Don’t Know JS", author: "Kyle Simpson", price: 19.99, availability: "in stock" },
+      { title: "Clean Code", author: "Robert C. Martin", price: 29.99, availability: "out of stock" }
+    ];
+
+    // cart.js
+    const cartModule = (() => {
+      let cart = [];
+      return {
+        addToCart(book) { cart.push(book); },
+        removeFromCart(index) { cart.splice(index,1); },
+        getCart() { return cart; },
+        calculateTotal() { return cart.reduce((total,item)=>total+item.price,0); }
+      };
+    })();
+
+    // ui.js
+    const uiModule = (() => {
+      const renderCart = () => {
+        const cartContainer = document.getElementById("cart");
+        const cart = cartModule.getCart();
+        cartContainer.innerHTML = "<h2>Shopping Cart</h2>";
+        if(cart.length===0) { cartContainer.innerHTML+="<p>Your cart is empty.</p>"; return; }
+        cart.forEach((item,index)=>{
+          const div=document.createElement("div");
+          div.classList.add("cart-item");
+          const priceInRupees = (item.price * conversionRate).toFixed(0);
+          div.innerHTML=`<p>${item.title} - ₹${priceInRupees}</p>
+                         <button class="remove-btn" data-id="${index}">Remove</button>`;
+          div.querySelector("button").addEventListener("click",()=>{
+            cartModule.removeFromCart(index);
+            renderCart();
+          });
+          cartContainer.appendChild(div);
+        });
+        const totalDiv=document.createElement("div");
+        const totalInRupees = (cartModule.calculateTotal()*conversionRate).toFixed(0);
+        totalDiv.innerHTML=`<h3>Total: ₹${totalInRupees}</h3>
+                            <button id="checkout">Proceed to Checkout</button>`;
+        cartContainer.appendChild(totalDiv);
+        document.getElementById("checkout").addEventListener("click",()=>{
+          alert("Proceeding to checkout... (mock)");
+        });
+      };
+      return { renderCart };
+    })();
+
+    // books.js
+    const booksModule = (() => {
+      const renderBooks = (books) => {
+        const bookContainer = document.getElementById("book-list");
+        bookContainer.innerHTML="";
+        books.forEach((book,index)=>{
+          const div=document.createElement("div");
+          div.classList.add("book");
+          const priceInRupees = (book.price * conversionRate).toFixed(0);
+          div.innerHTML=`<h3>${book.title}</h3>
+                         <p><strong>Author:</strong> ${book.author}</p>
+                         <p><strong>Price:</strong> ₹${priceInRupees}</p>
+                         <p><em>${book.availability}</em></p>
+                         <button class="add-btn" ${book.availability!=="in stock"?"disabled":""}>Add to Cart</button>`;
+          div.querySelector("button").addEventListener("click",()=>{
+            cartModule.addToCart(book);
+            uiModule.renderCart();
+          });
+          bookContainer.appendChild(div);
+        });
+      };
+      return { renderBooks };
+    })();
+
+    // main.js 
+    booksModule.renderBooks(booksData);
+    uiModule.renderCart();
+  </script>
+</body>
+</html>

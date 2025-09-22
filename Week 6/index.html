@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather App - Search</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(to right, #6dd5fa, #2980b9);
+    }
+    .container {
+        background: rgba(255,255,255,0.95);
+        padding: 50px 40px;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        width: 350px;
+        text-align: center;
+        animation: fadeIn 1s ease;
+    }
+    h1 {
+        color: #2980b9;
+        margin-bottom: 30px;
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+    input {
+        width: 100%;
+        padding: 15px 20px;
+        border-radius: 12px;
+        border: 1px solid #2980b9;
+        font-size: 1rem;
+        margin-bottom: 20px;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+    input:focus {
+        box-shadow: 0 0 10px rgba(41,128,185,0.5);
+        border-color: #2980b9;
+    }
+    button {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(to right, #6dd5fa, #2980b9);
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Weather App</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button id="searchBtn">Check Weather</button>
+</div>
+
+<script>
+    const cityInput = document.getElementById('cityInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    searchBtn.addEventListener('click', () => {
+        const city = cityInput.value.trim();
+        if(city) {
+            localStorage.setItem('lastCity', city);
+            window.location.href = `weather.html?city=${encodeURIComponent(city)}`;
+        }
+    });
+
+    window.addEventListener('load', () => {
+        const lastCity = localStorage.getItem('lastCity');
+        if(lastCity) cityInput.value = lastCity;
+    });
+</script>
+</body>
+</html>

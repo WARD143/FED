@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather App - Results</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(to right, #2980b9, #6dd5fa);
+    }
+    .container {
+        background: rgba(255,255,255,0.95);
+        padding: 40px 35px;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        width: 360px;
+        text-align: center;
+        animation: fadeIn 1s ease;
+    }
+    h1 {
+        color: #2980b9;
+        margin-bottom: 25px;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    #weatherResult {
+        background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        font-size: 1.1rem;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease;
+    }
+    #weatherResult:hover { transform: scale(1.02); }
+    p {
+        margin: 12px 0;
+        font-weight: 600;
+    }
+    .error {
+        color: red;
+        font-weight: 700;
+    }
+    button {
+        padding: 15px;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(to right, #6dd5fa, #2980b9);
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Weather Info</h1>
+    <div id="weatherResult">Loading...</div>
+    <button id="backBtn">Search Another City</button>
+</div>
+
+<script>
+    const weatherResult = document.getElementById('weatherResult');
+    const backBtn = document.getElementById('backBtn');
+
+    backBtn.addEventListener('click', () => window.location.href = 'index.html');
+
+    const params = new URLSearchParams(window.location.search);
+    let city = params.get('city') || localStorage.getItem('lastCity');
+
+    if(!city) {
+        weatherResult.innerHTML = '<p class="error">No city specified.</p>';
+    } else {
+        async function fetchWeather(city) {
+            try {
+                const res = await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=j1`);
+                if(!res.ok) throw new Error('Failed to fetch weather data.');
+                const data = await res.json();
+
+                const tempC = data.current_condition[0].temp_C;
+                const condition = data.current_condition[0].weatherDesc[0].value;
+                const humidity = data.current_condition[0].humidity;
+
+                // Weather card content
+                weatherResult.innerHTML = `
+                    <p><strong>City:</strong> ${city}</p>
+                    <p><strong>Temperature:</strong> ${tempC}°C</p>
+                    <p><strong>Condition:</strong> ${condition}</p>
+                    <p><strong>Humidity:</strong> ${humidity}%</p>
+                `;
+            } catch(err) {
+                weatherResult.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+            }
+        }
+
+        fetchWeather(city);
+    }
+</script>
+</body>
+</html>
